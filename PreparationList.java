@@ -20,4 +20,13 @@ public class PreparationList {
     public String[] getItems() {
         return items;
     }
+
+    public int getItemCount() {
+        return itemCount;
+    }
+
+    public void addItem(String itemName) {
+        items[itemCount] = itemName;
+        itemCount++;
+    }
 }
