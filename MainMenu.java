@@ -7,6 +7,7 @@ public class MainMenu {
     private Scanner sc = new Scanner(System.in);
     private ListManager listManager = new ListManager();
     private ItemManager itemManager = new ItemManager();
+    private FileManager fileManager = new FileManager();
 
     // 메인 메뉴 기능 목록
     private String[] mainMenu = { // 타 클래스에서 수정 불가하게 private로 함
@@ -44,6 +45,9 @@ public class MainMenu {
 
     // 메인 메뉴 실행(프로그램 시작 시 실행)
     public void runMainMenu() {
+        // 프로그램 시작 시 파일에 저장된 데이터 불러오기
+        fileManager.loadData(listManager);
+        
         while (true) {
             showMainMenu();
             String answer = sc.nextLine().trim();
@@ -62,6 +66,7 @@ public class MainMenu {
                         deleteListMenu(); // 목록 삭제 기능 실행
                         break;
                     case "0":
+                        fileManager.saveData(listManager); // 파일에 내용 저장하고 종료하기
                         System.out.println("프로그램을 종료합니다\n");
                         return;
 
@@ -102,6 +107,7 @@ public class MainMenu {
         try {
             // 실제 준비물 목록 객체 생성 수행
             list = listManager.addList(listName);
+            // 데이터 저장
             System.out.println("\n[안내] 준비물 목록이 생성되었습니다.");
         } catch (IllegalArgumentException e) {
             System.out.println("[입력 오류] " + e.getMessage());
@@ -130,6 +136,7 @@ public class MainMenu {
                 System.out.println("[입력 오류] " + e.getMessage());
             }
         }
+        fileManager.saveData(listManager); // 파일에 저장
         System.out.println("\n[안내] 목록에 준비물 입력이 완료되었습니다.");
     }
 
@@ -145,6 +152,7 @@ public class MainMenu {
 
         try {
             listManager.renameList(index, newName); // 실제 목록 이름 변경 수행
+            fileManager.saveData(listManager); // 파일에 저장
             System.out.println("[안내] " + (index + 1) + "번 목록의 이름이 " + newName +"로 변경되었습니다.");
 
         } catch (IllegalArgumentException e) {
@@ -162,6 +170,7 @@ public class MainMenu {
 
         try {
             listManager.deleteList(index); // 실제 목록 삭제 수행
+            fileManager.saveData(listManager); // 파일에 저장
             System.out.println("[안내] 준비물 목록이 삭제되었습니다.");
 
         } catch (IllegalArgumentException e) {
