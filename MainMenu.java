@@ -54,20 +54,20 @@ public class MainMenu {
             try {
                 switch (answer) {
                     case "a":
-                        System.out.println("준비물 목록을 생성\n");
+                        System.out.println("\n[안내] 준비물 목록을 생성");
                         addListMenu(); // 목록 생성 기능 실행
                         break;
                     case "b":
-                        System.out.println("목록의 이름을 변경\n");
+                        System.out.println("\n[안내] 목록의 이름을 변경");
                         renameListMenu(); // 목록 이름 변경 기능 실행
                         break;
                     case "c":
-                        System.out.println("준비물 목록을 삭제\n");
+                        System.out.println("\n[안내] 준비물 목록을 삭제");
                         deleteListMenu(); // 목록 삭제 기능 실행
                         break;
                     case "0":
                         fileManager.saveData(listManager); // 파일에 내용 저장하고 종료하기
-                        System.out.println("프로그램을 종료합니다\n");
+                        System.out.println("\n[안내] 프로그램을 종료합니다");
                         return;
 
                     default:
