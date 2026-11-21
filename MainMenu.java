@@ -74,7 +74,6 @@ public class MainMenu {
             showMainMenu();
             String answer = sc.nextLine().trim();
             try {
-                validateMenuInput(answer);
                 switch (answer) {
                     case "a":
                         System.out.println("[안내] 준비물 목록을 추가합니다.\n");
@@ -90,7 +89,7 @@ public class MainMenu {
                         break;
                     case "0":
                         fileManager.saveData(listManager); // 파일에 내용 저장하고 종료하기
-                        System.out.println("\n[안내] 프로그램을 종료합니다");
+                        System.out.println("\n[안내] 프로그램을 종료합니다\n");
                         return;
 
                     default:
@@ -133,12 +132,8 @@ public class MainMenu {
 
             if (itemName.equals("0")) break; // 준비물 입력 종료
 
-            if (itemName.isEmpty()) { // 공백 입력 방지
-                System.out.println("[안내] 준비물 이름을 입력해 주세요.");
-                continue;
-            }
-
             try {
+                // 공백 입력 방지 및 중복, 최대 개수 검사는 준비물 추가 시 수행
                 itemManager.addItemMenu(list, itemName);
             } catch (IllegalArgumentException e) {
                 System.out.println("[입력 오류] " + e.getMessage());
@@ -159,7 +154,7 @@ public class MainMenu {
         try {
             index = parseListIndex(input);
         } catch (IllegalArgumentException e) {
-            System.out.println("[입력 오류] " + e.getMessage());
+            System.out.println("[입력 오류] " + e.getMessage() + "\n");
             return;
         }
         System.out.print("새로운 목록 이름: ");
@@ -186,7 +181,7 @@ public class MainMenu {
         try {
             index = parseListIndex(input);
         } catch (IllegalArgumentException e) {
-            System.out.println("[입력 오류] " + e.getMessage());
+            System.out.println("[입력 오류] " + e.getMessage() + "\n");
             return;
         }
 

@@ -97,36 +97,20 @@ public class FileManager {
 
             for (SavedList savedList : data) {
                 if (savedList == null || savedList.items == null) {
-                    throw new IllegalArgumentException(
-                            "목록 또는 준비물 배열이 없습니다."
-                    );
-                }
-
-                if (savedList.items.length > 50) {
-                    throw new IllegalArgumentException(
-                            "목록당 준비물은 최대 50개입니다."
-                    );
+                    throw new IllegalArgumentException("목록 또는 준비물 배열이 없습니다.");
                 }
 
                 // 목록 개수, 이름 공백, 이름 중복 검사 부분
                 PreparationList list = loadedManager.addList(savedList.listName);
 
                 for (String item : savedList.items) {
-                    if (item == null || item.trim().isEmpty()) {
-                        throw new IllegalArgumentException(
-                                "준비물 이름이 비어 있습니다."
-                        );
-                    }
-
+                    // 준비물 공백, 중복 및 최대 개수 검사는 추가 시 수행
                     list.addItem(item);
                 }
             }
 
         } catch (IllegalArgumentException e) {
-            System.out.println(
-                    "[오류] 저장 데이터가 올바르지 않습니다: "
-                            + e.getMessage()
-            );
+            System.out.println("[오류] 저장 데이터가 올바르지 않습니다: " + e.getMessage());
             return;
         }
 
