@@ -6,7 +6,6 @@ public class MainMenu {
     // 사용자 입력을 위한 Scanner
     private Scanner sc = new Scanner(System.in);
     private ListManager listManager = new ListManager();
-    private ItemManager itemManager = new ItemManager();
     private FileManager fileManager = new FileManager();
 
     // 메인 메뉴 기능 목록
@@ -146,7 +145,7 @@ public class MainMenu {
 
             try {
                 // 공백 입력 방지 및 중복, 최대 개수 검사는 준비물 추가 시 수행
-                itemManager.addItemMenu(list, itemName);
+                list.addItem(itemName);
             } catch (IllegalArgumentException e) {
                 System.out.println("[입력 오류] " + e.getMessage());
             }
@@ -259,11 +258,11 @@ public class MainMenu {
                         return;
                     default:
                         throw new IllegalArgumentException(
-                            "메뉴에 존재하지 않는 입력입니다.\n올바른 알파벳을 입력해 주세요."
+                            "메뉴에 존재하지 않는 입력입니다.\n올바른 알파벳 또는 숫자를 입력해 주세요."
                         );
                     }
             } catch (IllegalArgumentException e) {
-                System.out.println("[입력오류] " + e.getMessage() + "\n");
+                System.out.println("[입력오류] " + e.getMessage());
             }
         }
     }

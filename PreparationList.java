@@ -33,16 +33,20 @@ public class PreparationList {
         return copy;
     }
 
+    // 준비물 추가 메소드
     public void addItem(String itemName) {
+        // 공백 입력 검사
         if (itemName == null || itemName.trim().isEmpty()) {
             throw new IllegalArgumentException("준비물 이름을 입력해 주세요.");
         }
         itemName = itemName.trim();
+        // 중복 입력 검사
         for (int i = 0; i < itemCount; i++) {
             if (items[i].equals(itemName)) {
                 throw new IllegalArgumentException("이미 존재하는 준비물 이름입니다.");
             }
         }
+        // 최대 준비물 개수 검사
         if (itemCount >= items.length) {
             throw new IllegalArgumentException("최대 준비물 개수(50)를 초과할 수 없습니다.");
         }
