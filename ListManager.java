@@ -56,7 +56,7 @@ public class ListManager {
     // 목록 생성과 이름 변경 시 공백 및 중복 검사 메소드
     private String validateListName(String listName) {
         if (listName == null || listName.trim().isEmpty()) {
-            throw new IllegalArgumentException("목록 이름을 입력해 주세요.");
+            throw new IllegalArgumentException("올바르지 않은 입력입니다.");
         }
 
         listName = listName.trim();
