@@ -24,6 +24,28 @@ public class MainMenu {
         "0. 메인으로 돌아가기"
     };
 
+    // 메뉴 입력의 공백 검사 메소드
+    private void validateMenuInput(String input) {
+        if (input == null || input.trim().isEmpty()) {
+            throw new IllegalArgumentException("메뉴를 입력해 주세요.");
+        }
+    }
+
+    // 목록 선택, 이름 변경, 삭제 시 목록 번호 형식 및 범위 검사 메소드
+    private int parseListIndex(String input) {
+        validateMenuInput(input);
+        int number;
+        try {
+            number = Integer.parseInt(input.trim());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("목록 번호를 숫자로 입력해 주세요.");
+        }
+        if (number < 1 || number > listManager.getListCount()) {
+            throw new IllegalArgumentException("존재하지 않는 목록 번호입니다.");
+        }
+        return number - 1;
+    }
+
     // 메인 메뉴 출력 메소드
     public void showMainMenu() {
         System.out.println("==============================");
@@ -52,17 +74,18 @@ public class MainMenu {
             showMainMenu();
             String answer = sc.nextLine().trim();
             try {
+                validateMenuInput(answer);
                 switch (answer) {
                     case "a":
-                        System.out.println("\n[안내] 준비물 목록을 생성");
-                        addListMenu(); // 목록 생성 기능 실행
+                        System.out.println("[안내] 준비물 목록을 추가합니다.\n");
+                        addListMenu(); // 목록 추가 기능 실행
                         break;
                     case "b":
-                        System.out.println("\n[안내] 목록의 이름을 변경");
+                        System.out.println("[안내] 목록의 이름을 변경합니다.\n");
                         renameListMenu(); // 목록 이름 변경 기능 실행
                         break;
                     case "c":
-                        System.out.println("\n[안내] 준비물 목록을 삭제");
+                        System.out.println("[안내] 준비물 목록을 삭제합니다.\n");
                         deleteListMenu(); // 목록 삭제 기능 실행
                         break;
                     case "0":
@@ -71,23 +94,9 @@ public class MainMenu {
                         return;
 
                     default:
-                        // 입력값이 위에 안 걸리는 경우 숫자인 목록 번호로 처리
-                    try {
-                        int index = Integer.parseInt(answer) - 1;
-
-                        // 생성된 목록의 범위에 해당하는지 확인
-                        if (index >= 0 && index < listManager.getListCount()) {
-                            runItemMenu(index); // 해당 번호의 준비물 목록과 아이템 메뉴 출력 메소드
-                        } else {
-                            throw new IllegalArgumentException(
-                                "존재하지 않는 목록 번호입니다."
-                            );
-                        }
-
-                    } catch (NumberFormatException e) {
-                        throw new IllegalArgumentException(
-                                "메뉴에 존재하지 않는 입력입니다.\n올바른 숫자나 알파벳을 입력해 주세요.\n");
-                    }
+                        // 입력값이 위에 안 걸리는 경우 일단 목록 번호로 처리
+                        int index = parseListIndex(answer); // 입력 검사
+                        runItemMenu(index); // 해당 번호의 준비물 목록과 아이템 메뉴 출력 메소드
                 }
             } catch (IllegalArgumentException e) {
                 System.out.println("[입력 오류] " + e.getMessage());
@@ -106,9 +115,8 @@ public class MainMenu {
 
         try {
             // 실제 준비물 목록 객체 생성 수행
-            list = listManager.addList(listName);
-            // 데이터 저장
-            System.out.println("\n[안내] 준비물 목록이 생성되었습니다.");
+            list = listManager.addList(listName); // 데이터 저장
+            System.out.println("[안내] 목록이 생성되었습니다.\n");
         } catch (IllegalArgumentException e) {
             System.out.println("[입력 오류] " + e.getMessage());
             return;
@@ -116,7 +124,7 @@ public class MainMenu {
         // 목록에 준비물 추가 수행
         while (true) {
             if (list.getItemCount() >= list.getItems().length) { // 준비물 배열 여유 공간 확인
-                System.out.println("준비물을 더 이상 추가할 수 없습니다.");
+                System.out.println("[안내] 최대 준비물 개수(50)에 도달했습니다.");
                 break;
             }
 
@@ -137,7 +145,7 @@ public class MainMenu {
             }
         }
         fileManager.saveData(listManager); // 파일에 저장
-        System.out.println("\n[안내] 목록에 준비물 입력이 완료되었습니다.");
+        System.out.println("[안내] 준비물 입력이 완료되었습니다.");
     }
 
 
@@ -146,7 +154,14 @@ public class MainMenu {
         System.out.println("----------준비물 목록 이름 변경----------");
 
         System.out.print("이름을 변경할 목록 번호: ");
-        int index = Integer.parseInt(sc.nextLine().trim()) - 1;
+        String input = sc.nextLine().trim();
+        int index;
+        try {
+            index = parseListIndex(input);
+        } catch (IllegalArgumentException e) {
+            System.out.println("[입력 오류] " + e.getMessage());
+            return;
+        }
         System.out.print("새로운 목록 이름: ");
         String newName = sc.nextLine().trim();
 
@@ -166,7 +181,14 @@ public class MainMenu {
         System.out.println("----------준비물 목록 삭제----------");
 
         System.out.print("삭제할 목록 번호: ");
-        int index = Integer.parseInt(sc.nextLine().trim()) - 1;
+        String input = sc.nextLine().trim();
+        int index;
+        try {
+            index = parseListIndex(input);
+        } catch (IllegalArgumentException e) {
+            System.out.println("[입력 오류] " + e.getMessage());
+            return;
+        }
 
         try {
             listManager.deleteList(index); // 실제 목록 삭제 수행
@@ -182,7 +204,7 @@ public class MainMenu {
     
     // 해당 번호의 준비물 목록과 준비물 메뉴 출력 메소드
     public void showItemMenu(int index) {
-        System.out.println("------------------------------");
+        System.out.println("==============================");
 
         // 해당 인덱스의 준비물 목록 이름과 준비물들 출력
         PreparationList list = listManager.getList(index);
@@ -213,6 +235,7 @@ public class MainMenu {
             String answer = sc.nextLine().trim();
 
             try {
+                validateMenuInput(answer);
                 switch (answer) {
                     // 추후 준비물 관련 메뉴 추가(추가, 수정, 삭제, 체크리스트)
                     case "0":

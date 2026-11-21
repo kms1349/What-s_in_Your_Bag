@@ -44,15 +44,7 @@ public class ListManager {
             throw new IllegalArgumentException("최대 목록 개수(50)을 초과하였습니다.\n더 이상 목록을 추가할 수 없습니다.");
         }
 
-        if (listName == null || listName.trim().isEmpty()) {
-            throw new IllegalArgumentException("목록 이름을 입력해 주세요.");
-        }
-
-        for (int i = 0; i < listCount; i++) {
-            if (lists[i].getListName().equals(listName)) {
-                throw new IllegalArgumentException("이미 존재하는 목록 이름입니다.");
-            }
-        }
+        listName = validateListName(listName);
 
         PreparationList newList = new PreparationList(listName);
         lists[listCount] = newList;
@@ -61,16 +53,28 @@ public class ListManager {
         return newList;
     }
 
+    // 목록 생성과 이름 변경 시 공백 및 중복 검사 메소드
+    private String validateListName(String listName) {
+        if (listName == null || listName.trim().isEmpty()) {
+            throw new IllegalArgumentException("목록 이름을 입력해 주세요.");
+        }
+
+        listName = listName.trim();
+        for (int i = 0; i < listCount; i++) {
+            if (lists[i].getListName().equals(listName)) {
+                throw new IllegalArgumentException("이미 존재하는 목록 이름입니다.");
+            }
+        }
+
+        return listName;
+    }
+
     // 준비물 목록 이름 변경 메소드
     public void renameList(int index, String newName) {
         if (index < 0 || index >= listCount) {
             throw new IllegalArgumentException("잘못된 목록 번호입니다.\n");
         }
-        for (int i = 0; i < listCount; i++) {
-            if (lists[i].getListName().equals(newName)) {
-                throw new IllegalArgumentException("이미 존재하는 목록 이름입니다.");
-            }
-        }
+        newName = validateListName(newName);
         lists[index].setListName(newName);
     }
 

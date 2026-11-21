@@ -51,11 +51,11 @@ public class FileManager {
             writer.write(json); // 파일에 쓰기
 
             System.out.println(
-                    "[안내] 변경된 준비물 목록이 저장되었습니다."
+                    "[안내] 데이터가 파일에 저장되었습니다.\n"
             );
 
         } catch (IOException e) {
-            System.out.println("[오류] 파일 저장에 실패했습니다.");
+            System.out.println("[오류] 파일 저장에 실패했습니다.\n");
             e.printStackTrace();
         }
     }
