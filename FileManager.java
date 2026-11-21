@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 
 public class FileManager {
@@ -26,7 +27,7 @@ public class FileManager {
     }
     
     // 준비물 목록 저장 메소드
-    public void saveData(ListManager listManager) {
+    public boolean saveData(ListManager listManager) {
         // 저장할 목록 data 객체 만들고 내용 복사
         SavedList[] data = new SavedList[listManager.getListCount()];
 
@@ -45,16 +46,33 @@ public class FileManager {
         // data 객체를 json 형식으로 변환하고 파일에 저장
         String json = gson.toJson(data);
 
-        try (BufferedWriter writer = Files.newBufferedWriter(
-                FILE_PATH, StandardCharsets.UTF_8)) {
-
-            writer.write(json); // 파일에 쓰기
+        Path temporaryFile = null;
+        try {
+            Path target = FILE_PATH.toAbsolutePath(); // 같은 디렉터리의 임시 파일에 먼저 저장한 뒤 원본 교체
+            temporaryFile = Files.createTempFile(target.getParent(), "preparation-", ".tmp");
+            try (BufferedWriter writer = Files.newBufferedWriter(
+                    temporaryFile, StandardCharsets.UTF_8)) {
+                writer.write(json); // 파일에 쓰기
+            }
+            // 원자적 교체를 지원하지 않으면 저장 실패로 처리하여 원본 보호
+            Files.move(temporaryFile, target,
+                    StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
 
             // System.out.println("[안내] 데이터가 파일에 저장되었습니다."); 성공 시 안내 문구 출력X
+            return true;
 
-        } catch (IOException e) {
+        } catch (IOException | SecurityException e) {
             System.out.println("[오류] 파일 저장에 실패했습니다.");
             e.printStackTrace();
+            return false;
+        } finally {
+            if (temporaryFile != null) {
+                try {
+                    Files.deleteIfExists(temporaryFile);
+                } catch (IOException | SecurityException e) {
+                    System.out.println("[안내] 임시 저장 파일을 정리하지 못했습니다.\n");
+                }
+            }
         }
     }
 

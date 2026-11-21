@@ -46,6 +46,16 @@ public class MainMenu {
         return number - 1;
     }
 
+    // 복사본 저장 성공 시에만 실제 목록에 반영하는 메소드
+    private boolean saveChanges(ListManager copy) {
+        if (!fileManager.saveData(copy)) {
+            System.out.println("[안내] 저장에 실패하여 변경 내용을 반영하지 않았습니다.\n");
+            return false;
+        }
+        listManager = copy;
+        return true;
+    }
+
     // 메인 메뉴 출력 메소드
     public void showMainMenu() {
         System.out.println("==============================");
@@ -88,7 +98,7 @@ public class MainMenu {
                         deleteListMenu(); // 목록 삭제 기능 실행
                         break;
                     case "0":
-                        fileManager.saveData(listManager); // 파일에 내용 저장하고 종료하기
+                        // 변경할 때마다 저장이 완료되어 있으므로 바로 종료
                         System.out.println("\n[안내] 프로그램을 종료합니다\n");
                         return;
 
@@ -110,12 +120,13 @@ public class MainMenu {
         System.out.print("준비물 목록 이름: ");
         String listName = sc.nextLine().trim();
 
+        ListManager copy = listManager.copy();
         PreparationList list;
 
         try {
-            // 실제 준비물 목록 객체 생성 수행
-            list = listManager.addList(listName); // 데이터 저장
-            System.out.println("[안내] 목록이 생성되었습니다. 준비물을 입력해 주세요.\n");
+            // 복사본에 준비물 목록 객체 생성 수행
+            list = copy.addList(listName); // 저장할 데이터 준비
+            System.out.println("[안내] 준비물을 입력해 주세요. 입력 완료 후 목록을 저장합니다.\n");
         } catch (IllegalArgumentException e) {
             System.out.println("[입력 오류] " + e.getMessage() + "\n");
             return;
@@ -139,8 +150,9 @@ public class MainMenu {
                 System.out.println("[입력 오류] " + e.getMessage());
             }
         }
-        fileManager.saveData(listManager); // 파일에 저장
-        System.out.println("[안내] 준비물 입력이 완료되었습니다.\n");
+        if (saveChanges(copy)) { // 파일에 저장한 뒤 실제 목록에 반영
+            System.out.println("[안내] 목록 생성 및 준비물 입력이 완료되었습니다.\n");
+        }
     }
 
 
@@ -161,9 +173,11 @@ public class MainMenu {
         String newName = sc.nextLine().trim();
 
         try {
-            listManager.renameList(index, newName); // 실제 목록 이름 변경 수행
-            fileManager.saveData(listManager); // 파일에 저장
-            System.out.println("[안내] " + (index + 1) + "번 목록의 이름이 " + newName +"로 변경되었습니다.\n");
+            ListManager copy = listManager.copy();
+            copy.renameList(index, newName); // 복사본의 목록 이름 변경 수행
+            if (saveChanges(copy)) { // 파일에 저장한 뒤 실제 목록에 반영
+                System.out.println("[안내] " + (index + 1) + "번 목록의 이름이 " + newName +"로 변경되었습니다.\n");
+            }
 
         } catch (IllegalArgumentException e) {
             // 목록 생성 중 발생한 예외 처리
@@ -186,9 +200,11 @@ public class MainMenu {
         }
 
         try {
-            listManager.deleteList(index); // 실제 목록 삭제 수행
-            fileManager.saveData(listManager); // 파일에 저장
-            System.out.println("[안내] 준비물 목록이 삭제되었습니다.\n");
+            ListManager copy = listManager.copy();
+            copy.deleteList(index); // 복사본의 목록 삭제 수행
+            if (saveChanges(copy)) { // 파일에 저장한 뒤 실제 목록에 반영
+                System.out.println("[안내] 준비물 목록이 삭제되었습니다.\n");
+            }
 
         } catch (IllegalArgumentException e) {
             // 목록 삭제 중 발생한 예외 처리

@@ -25,6 +25,14 @@ public class PreparationList {
         return itemCount;
     }
 
+    // 준비물 배열까지 독립적으로 복사하는 메소드
+    public PreparationList copy() {
+        PreparationList copy = new PreparationList(listName);
+        System.arraycopy(items, 0, copy.items, 0, itemCount);
+        copy.itemCount = itemCount;
+        return copy;
+    }
+
     public void addItem(String itemName) {
         if (itemName == null || itemName.trim().isEmpty()) {
             throw new IllegalArgumentException("준비물 이름을 입력해 주세요.");

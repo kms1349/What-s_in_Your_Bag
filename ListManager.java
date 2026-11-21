@@ -9,6 +9,16 @@ public class ListManager {
         return listCount;
     }
     
+    // 모든 목록과 준비물 내용을 복사하는 메소드
+    public ListManager copy() {
+        ListManager copy = new ListManager();
+        for (int i = 0; i < listCount; i++) {
+            copy.lists[i] = lists[i].copy();
+        }
+        copy.listCount = listCount;
+        return copy;
+    }
+    
     // 특정 인덱스의 list 얻는 메소드
     public PreparationList getList(int index) {
         if (index < 0 || index >= listCount) {
