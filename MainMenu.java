@@ -21,6 +21,7 @@ public class MainMenu {
     // Item 메뉴 기능 목록
     private String[] itemMenu = {
         "[준비물 메뉴]",
+        "a. 체크리스트 수행",
         "0. 메인으로 돌아가기"
     };
 
@@ -99,7 +100,7 @@ public class MainMenu {
                         break;
                     case "0":
                         // 변경할 때마다 저장이 완료되어 있으므로 바로 종료
-                        System.out.println("\n[안내] 프로그램을 종료합니다\n");
+                        System.out.println("\n[안내] 프로그램을 종료합니다");
                         return;
 
                     default:
@@ -249,6 +250,10 @@ public class MainMenu {
                 validateMenuInput(answer);
                 switch (answer) {
                     // 추후 준비물 관련 메뉴 추가(추가, 수정, 삭제, 체크리스트)
+                    case "a":
+                        System.out.println("[안내] 체크리스트를 수행합니다.\n");
+                        runChecklist(index); // 체크리스트 수행
+                        break;
                     case "0":
                         System.out.println("[안내] 메인 메뉴로 돌아갑니다.\n");
                         return;
@@ -261,5 +266,45 @@ public class MainMenu {
                 System.out.println("[입력오류] " + e.getMessage() + "\n");
             }
         }
+    }
+
+    // 체크리스트 수행 메소드
+    public void runChecklist(int index) {
+        PreparationList list = listManager.getList(index);
+        boolean[] packed = new boolean[list.getItemCount()];
+        int packedCount = 0;
+
+        System.out.println("----------준비물 체크리스트----------");
+        for (int i = 0; i < list.getItemCount(); i++) {
+            while (true) {
+                System.out.print(list.getItems()[i] + " 챙겼나요? (y/n): ");
+                String answer = sc.nextLine().trim();
+
+                if (answer.equalsIgnoreCase("y")) {
+                    packed[i] = true;
+                    packedCount++;
+                    break;
+                } else if (answer.equalsIgnoreCase("n")) {
+                    break;
+                }
+                System.out.println("[입력 오류] y 또는 n을 입력해 주세요.");
+            }
+        }
+
+        System.out.println("챙긴 물건 수: " + packedCount
+                + "개 / 안 챙긴 물건 수: " + (list.getItemCount() - packedCount) + "개\n");
+        System.out.println("[챙겨야 할 준비물]");
+        if (packedCount == list.getItemCount()) {
+            System.out.println("준비물을 다 챙겼습니다!");
+        } else {
+            for (int i = 0; i < list.getItemCount(); i++) {
+                if (!packed[i]) {
+                    System.out.println("- " + list.getItems()[i]);
+                }
+            }
+        }
+        System.out.println();
+        System.out.print("Enter를 누르면 준비물 메뉴로 돌아갑니다: ");
+        sc.nextLine();
     }
 }
