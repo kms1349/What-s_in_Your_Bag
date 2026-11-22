@@ -1,0 +1,2 @@
+# Keep committed Windows batch line endings unchanged in ZIP archives.
+*.bat -text
